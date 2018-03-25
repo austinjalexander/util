@@ -1,6 +1,5 @@
-// go build -o ./compare-files/compare-files ./compare-files/main.go
-// ./compare-files/compare-files -filepath1=./compare-files/testdata/f1 -filepath2=./compare-files/testdata/f2
-// ./compare-files/compare-files -filepath1=./compare-files/testdata/f1 -filepath2=./compare-files/testdata/f1-copy
+// compare-files -filepath1=./compare-files/testdata/f1 -filepath2=./compare-files/testdata/f2
+// compare-files -filepath1=./compare-files/testdata/f1 -filepath2=./compare-files/testdata/f1-copy
 
 // go test -v ./...
 package main
