@@ -16,8 +16,8 @@ const (
 	timeout = time.Second * 20
 )
 
-// Serve creates a new routed server and runs it.
-func Serve(port uint16) {
+// Run creates a new routed Runr and runs it.
+func Run(port uint16) {
 	r := mux.NewRouter()
 
 	srv := &http.Server{
