@@ -16,6 +16,11 @@ const (
 	timeout = time.Second * 20
 )
 
+// Config represents modifiable server configurations.
+type Config struct {
+	OnlyJSONresponses bool
+}
+
 // Handler represents a HTTP handler for the server router.
 type Handler struct {
 	Func                          func(http.ResponseWriter, *http.Request)
@@ -30,9 +35,8 @@ type JSONresponse struct {
 }
 
 // Run creates a new routed server and runs it.
-func Run(handlers []Handler, port uint16) {
-	r := mux.NewRouter()
-	r.Use(headersMiddleware)
+func Run(cfg Config, handlers []Handler, port uint16) {
+	r := configureMiddleware(cfg)
 
 	for _, h := range handlers {
 		r.HandleFunc(h.Path, h.Func).
@@ -68,7 +72,15 @@ func Run(handlers []Handler, port uint16) {
 	os.Exit(0)
 }
 
-func headersMiddleware(next http.Handler) http.Handler {
+func configureMiddleware(cfg Config) *mux.Router {
+	r := mux.NewRouter()
+	if cfg.OnlyJSONresponses {
+		r.Use(onlyJSONresponses)
+	}
+	return r
+}
+
+func onlyJSONresponses(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
