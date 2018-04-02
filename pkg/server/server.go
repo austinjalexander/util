@@ -26,6 +26,7 @@ type Handler struct {
 // Run creates a new routed server and runs it.
 func Run(handlers []Handler, port uint16) {
 	r := mux.NewRouter()
+	r.Use(headersMiddleware)
 
 	for _, h := range handlers {
 		r.HandleFunc(h.Path, h.Func).
