@@ -25,8 +25,8 @@ type Handler struct {
 
 // JSONresponse reprents a JSON response body returned by the server.
 type JSONresponse struct {
-	Data   interface{} `json:"data"`
-	Errors interface{} `json:"errors"`
+	Data   interface{} `json:"data,omitempty"`
+	Errors interface{} `json:"errors,omitempty"`
 }
 
 // Run creates a new routed server and runs it.
