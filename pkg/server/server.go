@@ -36,14 +36,9 @@ type JSONresponse struct {
 
 // Run creates a new routed server and runs it.
 func Run(cfg Config, handlers []Handler, port uint16) {
-	r := configureMiddleware(cfg)
-
-	for _, h := range handlers {
-		r.HandleFunc(h.Path, h.Func).
-			Headers(h.Headers...).
-			Methods(h.Methods...).
-			Queries(h.QueryParams...)
-	}
+	r := mux.NewRouter()
+	configureMiddleware(cfg, r)
+	registerRoutes(handlers, r)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("0.0.0.0:%d", port),
@@ -72,12 +67,19 @@ func Run(cfg Config, handlers []Handler, port uint16) {
 	os.Exit(0)
 }
 
-func configureMiddleware(cfg Config) *mux.Router {
-	r := mux.NewRouter()
+func configureMiddleware(cfg Config, r *mux.Router) {
 	if cfg.OnlyJSONresponses {
 		r.Use(onlyJSONresponses)
 	}
-	return r
+}
+
+func registerRoutes(handlers []Handler, r *mux.Router) {
+	for _, h := range handlers {
+		r.HandleFunc(h.Path, h.Func).
+			Headers(h.Headers...).
+			Methods(h.Methods...).
+			Queries(h.QueryParams...)
+	}
 }
 
 func onlyJSONresponses(next http.Handler) http.Handler {
