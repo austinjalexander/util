@@ -17,6 +17,7 @@ func New(dir string) Doc {
 }
 
 // Write takes a server handler and writes it.
-func (d Doc) Write(h server.Handler) {
+func (d Doc) Write(h server.Handler) server.Handler {
 	fmt.Printf("%+v", h)
+	return server.Handler
 }
