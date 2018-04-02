@@ -16,11 +16,6 @@ const (
 	timeout = time.Second * 20
 )
 
-// Config represents modifiable server configurations.
-type Config struct {
-	OnlyJSONresponses bool
-}
-
 // Handler represents a HTTP handler for the server router.
 type Handler struct {
 	Func                          func(http.ResponseWriter, *http.Request)
@@ -34,14 +29,26 @@ type JSONresponse struct {
 	Errors interface{} `json:"errors,omitempty"`
 }
 
+// Server represents modifiable server configuration.
+type Server struct {
+	Handlers          []Handler
+	OnlyJSONresponses bool
+	Port              uint16
+}
+
+// New returns a new server configuration.
+func New() Server {
+	return Server{}
+}
+
 // Run creates a new routed server and runs it.
-func Run(cfg Config, handlers []Handler, port uint16) {
+func (s Server) Run() {
 	r := mux.NewRouter()
-	configureMiddleware(cfg, r)
-	registerRoutes(handlers, r)
+	s.configureMiddleware(r)
+	s.registerRoutes(r)
 
 	srv := &http.Server{
-		Addr:         fmt.Sprintf("0.0.0.0:%d", port),
+		Addr:         fmt.Sprintf("0.0.0.0:%d", s.Port),
 		Handler:      r,
 		IdleTimeout:  timeout,
 		ReadTimeout:  timeout,
@@ -67,14 +74,14 @@ func Run(cfg Config, handlers []Handler, port uint16) {
 	os.Exit(0)
 }
 
-func configureMiddleware(cfg Config, r *mux.Router) {
-	if cfg.OnlyJSONresponses {
+func (s Server) configureMiddleware(r *mux.Router) {
+	if s.OnlyJSONresponses {
 		r.Use(onlyJSONresponses)
 	}
 }
 
-func registerRoutes(handlers []Handler, r *mux.Router) {
-	for _, h := range handlers {
+func (s Server) registerRoutes(r *mux.Router) {
+	for _, h := range s.Handlers {
 		r.HandleFunc(h.Path, h.Func).
 			Headers(h.Headers...).
 			Methods(h.Methods...).
@@ -82,6 +89,7 @@ func registerRoutes(handlers []Handler, r *mux.Router) {
 	}
 }
 
+// Middleware.
 func onlyJSONresponses(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

@@ -1,7 +1,22 @@
 package apidoc
 
-type documenter struct{}
+import (
+	"fmt"
 
-func New(newDirpath string) {
-	return docum
+	"github.com/austinjalexander/util/pkg/server"
+)
+
+// Doc writes API documentation.
+type Doc struct {
+	baseDir string
+}
+
+// New returns a new, configured doc.
+func New(dir string) Doc {
+	return Doc{baseDir: dir}
+}
+
+// Write takes a server handler and writes it.
+func (d Doc) Write(h server.Handler) {
+	fmt.Printf("%+v", h)
 }
