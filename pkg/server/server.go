@@ -16,9 +16,23 @@ const (
 	timeout = time.Second * 20
 )
 
-// Run creates a new routed Runr and runs it.
-func Run(port uint16) {
+// Handler represents a HTTP handler for the server router.
+type Handler struct {
+	Func                          func(http.ResponseWriter, *http.Request)
+	Path                          string
+	Headers, Methods, QueryParams []string
+}
+
+// Run creates a new routed server and runs it.
+func Run(handlers []Handler, port uint16) {
 	r := mux.NewRouter()
+
+	for _, h := range handlers {
+		r.HandleFunc(h.Path, h.Func).
+			Headers(h.Headers...).
+			Methods(h.Methods...).
+			Queries(h.QueryParams...)
+	}
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("0.0.0.0:%d", port),
