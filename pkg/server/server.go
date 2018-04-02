@@ -23,6 +23,12 @@ type Handler struct {
 	Headers, Methods, QueryParams []string
 }
 
+// JSONresponse reprents a JSON response body returned by the server.
+type JSONresponse struct {
+	Data   interface{} `json:"data"`
+	Errors interface{} `json:"errors"`
+}
+
 // Run creates a new routed server and runs it.
 func Run(handlers []Handler, port uint16) {
 	r := mux.NewRouter()
