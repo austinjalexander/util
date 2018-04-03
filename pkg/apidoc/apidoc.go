@@ -2,6 +2,7 @@ package apidoc
 
 import (
 	"fmt"
+
 	"github.com/austinjalexander/util/pkg/server"
 )
 
@@ -27,7 +28,7 @@ func (d doc) Write(h server.Handler) server.Handler {
 
 func (d doc) Flush() {
 	close(d.handlerChan)
-	for h := d.handlerChan {
+	for h := range d.handlerChan {
 		fmt.Println(h)
 	}
 }
