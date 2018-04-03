@@ -28,6 +28,7 @@ func (d Doc) Write(h server.Handler) server.Handler {
 
 // Flush closes the handler channel and writes the documentation to disk.
 func (d Doc) Flush() {
+	fmt.Println("HEY")
 	close(d.handlerChan)
 	for h := range d.handlerChan {
 		fmt.Println(h)
