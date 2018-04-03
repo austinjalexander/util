@@ -6,27 +6,28 @@ import (
 	"github.com/austinjalexander/util/pkg/server"
 )
 
-// doc writes API documentation.
-type doc struct {
+// Doc writes API documentation.
+type Doc struct {
 	baseDir     string
 	handlerChan chan server.Handler
 }
 
-// New returns a new, configured doc.
-func New(dir string) doc {
-	return doc{
+// New returns a new, configured Doc.
+func New(dir string) Doc {
+	return Doc{
 		baseDir:     dir,
 		handlerChan: make(chan server.Handler),
 	}
 }
 
 // Write takes a server handler and writes it.
-func (d doc) Write(h server.Handler) server.Handler {
+func (d Doc) Write(h server.Handler) server.Handler {
 	d.handlerChan <- h
 	return h
 }
 
-func (d doc) Flush() {
+// Flush closes the handler channel and writes the documentation to disk.
+func (d Doc) Flush() {
 	close(d.handlerChan)
 	for h := range d.handlerChan {
 		fmt.Println(h)
