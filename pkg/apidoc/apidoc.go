@@ -22,9 +22,7 @@ func New(dir string) Doc {
 
 // Write takes a server handler and writes it.
 func (d Doc) Write(h server.Handler) server.Handler {
-	fmt.Println("hey")
 	d.handlerChan <- h
-	fmt.Println("yo")
 	return h
 }
 
