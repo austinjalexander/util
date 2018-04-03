@@ -16,7 +16,7 @@ type Doc struct {
 func New(dir string) Doc {
 	return Doc{
 		baseDir:     dir,
-		handlerChan: make(chan server.Handler),
+		handlerChan: make(chan server.Handler, 1),
 	}
 }
 
