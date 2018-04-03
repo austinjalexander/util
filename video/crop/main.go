@@ -67,6 +67,8 @@ func setCmdArgs(inFilepath string, w, h, x, y uint) (string, []string, error) {
 		inFilepath,
 		"-vf",
 		fmt.Sprintf("crop=%d:%d:%d:%d", w, h, x, y),
+		"-crf",
+		"1",
 		"-c:a",
 		"copy",
 		out,
